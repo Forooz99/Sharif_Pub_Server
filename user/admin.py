@@ -1,3 +1,7 @@
 from django.contrib import admin
+from user.models import UserAccount, Reader, Publisher
 
-# Register your models here.
+
+admin.site.register(UserAccount)
+admin.site.register(Reader)
+admin.site.register(Publisher)
