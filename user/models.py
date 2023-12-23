@@ -5,6 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserAccountManager(BaseUserManager):
+
     def create_user(self, email, password=None):
         if not email or len(email) <= 0:
             raise ValueError("Email required")
@@ -28,13 +29,15 @@ class UserAccountManager(BaseUserManager):
 
 
 class UserAccount(AbstractBaseUser):
+
     class Types(models.TextChoices):  # 2 different types of user
         READER = "READER", "reader"
         PUBLISHER = "PUBLISHER", "publisher"
 
-    username = models.CharField(max_length=50)
-    student_number = models.CharField(max_length=8, validators=[RegexValidator(regex='^[0-9]{8}$', message='student-number must have 8 digits')])
     email = models.EmailField(max_length=200, unique=True)
+    student_number = models.CharField(max_length=8, validators=[
+        RegexValidator(regex='^[0-9]{8}$', message='student-number must have 8 digits')])
+    profile_pic = models.ImageField(default='media/default_avatar.png', upload_to='profile_pics')
     type = models.CharField(max_length=8, choices=Types.choices, default=Types.READER)  # default user is reader
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -78,6 +81,7 @@ class ReaderManager(models.Manager):
 
 
 class Reader(UserAccount):
+
     class Meta:
         proxy = True
 
@@ -109,6 +113,7 @@ class PublisherManager(models.Manager):
 
 
 class Publisher(UserAccount):
+
     class Meta:
         proxy = True
 
