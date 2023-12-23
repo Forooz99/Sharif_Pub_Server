@@ -28,12 +28,12 @@ else:
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-h+#-4prrvcbuksbgx9h4a_h^ztuv7kzsq)0q$2a2qpten0#in5"
+SECRET_KEY = env_config.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_config.get("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".*"]
 
 
 # Application definition
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
+    "rest_framework",
     # Local Apps
     "user.apps.UserConfig",
     "journal.apps.JournalConfig",

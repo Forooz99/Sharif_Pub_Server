@@ -1,7 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class UserAccountManager(BaseUserManager):
@@ -11,7 +11,7 @@ class UserAccountManager(BaseUserManager):
         if not password:
             raise ValueError("Password required")
 
-        user = self.model(email=self.normalize_email(email),)
+        user = self.model(email=self.normalize_email(email), )
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -22,26 +22,25 @@ class UserAccountManager(BaseUserManager):
             password=password
         )
         user.is_admin = True
-        user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
         return user
 
 
 class UserAccount(AbstractBaseUser):
-    class Types(models.TextChoices):
+    class Types(models.TextChoices):  # 2 different types of user
         READER = "READER", "reader"
         PUBLISHER = "PUBLISHER", "publisher"
 
-    type = models.CharField(max_length=8, choices=Types.choices, default=Types.READER)
+    username = models.CharField(max_length=50)
+    student_number = models.CharField(max_length=8, validators=[RegexValidator(regex='^[0-9]{8}$', message='student-number must have 8 digits')])
     email = models.EmailField(max_length=200, unique=True)
+    type = models.CharField(max_length=8, choices=Types.choices, default=Types.READER)  # default user is reader
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    # special permission which define that
-    # the new user is publisher or reader
+    # if new user is publisher or reader
     is_reader = models.BooleanField(default=False)
     is_publisher = models.BooleanField(default=False)
 
@@ -52,12 +51,6 @@ class UserAccount(AbstractBaseUser):
 
     def __str__(self):
         return str(self.email)
-
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return True
 
     def save(self, *args, **kwargs):
         if not self.type or self.type == None:
@@ -85,7 +78,6 @@ class ReaderManager(models.Manager):
 
 
 class Reader(UserAccount):
-
     class Meta:
         proxy = True
 
@@ -117,7 +109,6 @@ class PublisherManager(models.Manager):
 
 
 class Publisher(UserAccount):
-
     class Meta:
         proxy = True
 
