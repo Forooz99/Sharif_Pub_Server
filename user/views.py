@@ -4,14 +4,16 @@ from rest_framework.response import Response
 from .models import Reader, Publisher
 from .serializers import ReaderSerializer, PublisherSerializer
 from rest_framework import serializers, status
+from django.http import HttpResponse
+from django.views import View
 
 
-class ReaderAPIView(APIView):
+class ReaderView(View):
     queryset = Reader.objects.all()
     serializer = ReaderSerializer()
 
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        return HttpResponse("result")
 
     def post(self, request, *args, **kwargs):
         data = JSONParser().parse(request)
