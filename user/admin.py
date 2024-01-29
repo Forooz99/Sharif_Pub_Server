@@ -1,7 +1,5 @@
 from django.contrib import admin
-from user.models import UserAccount, Reader, Publisher
+from user.models import User
 
 
-admin.site.register(UserAccount)
-admin.site.register(Reader)
-admin.site.register(Publisher)
+admin.site.register(User)

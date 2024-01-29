@@ -17,7 +17,7 @@ from decouple import config, Config, RepositoryEnv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOCAL_ENV_PATH = Path(__file__).resolve().parent.parent.joinpath(".localEnv")
-PRODUCTION_ENV_PATH = Path(__file__).resolve().parent.parent.joinpath(".productionEnv")
+PRODUCTION_ENV_PATH = Path(__file__).resolve().parent.parent.joinpath("..productionEnv")
 
 ENVIRONMENT = os.environ.get("ENV")
 
@@ -35,7 +35,7 @@ SECRET_KEY = env_config.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_config.get("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = [".*"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     "journal.apps.JournalConfig",
 ]
 
-AUTH_USER_MODEL = "user.UserAccount"
+AUTH_USER_MODEL = "user.User"  # main model for authentication
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -95,8 +95,8 @@ DATABASES = {
         'NAME': env_config.get('DB_NAME'),
         'USER': env_config.get('DB_USER'),
         'PASSWORD': env_config.get('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': 'localhost',  # use 'db' for docker
+        'PORT': 5432
     }
 }
 
@@ -141,3 +141,6 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # path to store files in the computer
+MEDIA_URL = '/media/'  # reference URL for browser to access the files over Http

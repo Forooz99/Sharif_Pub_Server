@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Journal,Category,Volume
+from .models import *
 
 admin.site.register(Journal)
-admin.site.register(Category)
 admin.site.register(Volume)

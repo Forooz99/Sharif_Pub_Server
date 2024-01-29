@@ -1,0 +1,5 @@
+SECRET_KEY =django-insecure-l(=tm%@*wk8xo9d226p9hog_40mow-71me3=+n(wch(@c^%^0j
+DEBUG=False
+DB_NAME=Sharif_Pub
+DB_USER=postgres
+DB_PASSWORD=postgres1402
