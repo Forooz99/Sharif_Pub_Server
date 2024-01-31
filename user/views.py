@@ -1,69 +1,77 @@
+from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import User, Reader, Publisher
-from .serializers import UserSerializer
+from .models import CustomUser, Reader, Publisher
+from .serializers import CustomUserSerializer, ReaderSerializer, PublisherSerializer
 from rest_framework import serializers, status
+from .forms import SignupForm, LoginForm
+from django.contrib.auth import authenticate, login, logout
 
 
-@api_view(['GET'])
-def apiOverview(request):
-    api_urls = {
-        'all_items': '/',
-        'Search by Category': '/?category=category_name',
-        'Search by Subcategory': '/?subcategory=category_name',
-        'Add Journal': '/add_journal',
-        'Add Volume': '/add_volume',
-        'Update': '/update/pk',
-        'Delete': '/item/pk/delete'
-    }
-    return Response(api_urls)
+def home(request):
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-def add_user(request):
-    user = UserSerializer(data=request.data)
+def signup(request):
+    # user = CustomUserSerializer(data=request.data)
+    if request.data.get('role') == 'READER':
+        print(request.data)
+        reader = ReaderSerializer(data=request.data)
+        if Reader.objects.filter(**request.data).exists():
+            raise serializers.ValidationError('This reader already exists')
 
+        if reader.is_valid():
+            reader.save()
+            return Response(reader.data)
+        else:
+            print("Nooooo")
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    elif request.data.get('role') == 'PUBLISHER':
+        publisher = PublisherSerializer(data=request.data)
+        if Publisher.objects.filter(**request.data).exists():
+            raise serializers.ValidationError('This publisher already exists')
+
+        if publisher.is_valid():
+            publisher.save()
+            return Response(publisher.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
     # validating for already existing data
-    if User.objects.filter(**request.data).exists():
-        raise serializers.ValidationError('This user already exists')
-
-    if user.is_valid():
-        user.save()
-        return Response(user.data)
-    else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-@api_view(['GET'])
-def view_users(request):
-    # checking for the parameters from the URL
-    if request.query_params:
-        users = User.objects.filter(**request.query_params.dict())
-    else:
-        users = User.objects.all()
-
-    # if there is something in items else raise error
-    if users:
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-    else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
-def update_user(request, pk):
-    user = User.objects.get(pk=pk)
-    data = UserSerializer(instance=user, data=request.data)
+def login(request):
+    form = LoginForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        user = authenticate(request, email=email, password=password)
+        if user:
+            login(request, user)
+            return redirect('home')
+    return Response(status=status.HTTP_200_OK)
 
-    if data.is_valid():
-        data.save()
-        return Response(data.data)
-    else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+def logout(request):
+    logout(request)
+    return redirect('home')
 
 
-@api_view(['DELETE'])
-def delete_user(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    user.delete()
-    return Response(status=status.HTTP_202_ACCEPTED)
+def delete_account(request):
+    return redirect('home')
+
+
+@api_view["GET"]
+def all_readers(request):
+    pass
+
+
+@api_view["GET"]
+def all_publishers(request):
+    pass
+
+
+

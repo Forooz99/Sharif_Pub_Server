@@ -5,20 +5,6 @@ from .serializers import JournalSerializer, VolumeSerializer
 from rest_framework import serializers, status
 
 
-@api_view(['GET'])
-def apiOverview(request):
-    api_urls = {
-        'all_items': '/',
-        'Search by Category': '/?category=category_name',
-        'Search by Subcategory': '/?subcategory=category_name',
-        'Add Journal': '/add_journal',
-        'Add Volume': '/add_volume',
-        'Update': '/update/pk',
-        'Delete': '/item/pk/delete'
-    }
-    return Response(api_urls)
-
-
 @api_view(['POST'])
 def add_journal(request):
     journal = JournalSerializer(data=request.data)

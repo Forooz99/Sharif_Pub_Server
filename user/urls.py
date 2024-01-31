@@ -3,9 +3,10 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.apiOverview, name='home'),
-    path('add_user/', views.add_user, name='add-user'),
-    path('view_users/', views.view_users, name='view_user'),
-    path('update_user/<int:pk>/', views.update_user, name='update-user'),
-    path('user/<int:pk>/delete/', views.delete_user, name='delete-user'),
+    path('login/', views.login, name='login'),
+    path('signup/', views.signup, name='signup'),
+    path('logout/', views.logout, name='logout'),
+    path('delete_account/<int:pk>', views.delete_account, name='delete_account'),
+    path('all_readers', views.all_readers, name='all_readers'),
+    path('all_publishers', views.all_publishers, name='all_publishers'),
 ]

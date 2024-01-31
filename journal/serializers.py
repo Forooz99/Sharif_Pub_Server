@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import *
+from .models import Journal, Volume
+
+
+class JournalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Journal
+        fields = '__all__'
 
 
 class VolumeSerializer(serializers.ModelSerializer):
@@ -7,8 +13,3 @@ class VolumeSerializer(serializers.ModelSerializer):
         model = Volume
         fields = '__all__'
 
-
-class JournalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Journal
-        fields = '__all__'
