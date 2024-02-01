@@ -2,8 +2,12 @@ version: "3.9"
 
 services:
   server:
-    build: .  # looks for Dockerfile in the current directory and uses it to build the image
-    command: python /serverCode/manage.py runserver 0.0.0.0:8000
+    build:
+      context: ./sourceCode
+      dockerfile: Dockerfile.prod
+    command: gunicorn Sharif_Pub_Server.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
     volumes:
       - .:/serverCode
     networks:
@@ -11,7 +15,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./.localEnv
+      - ./.productionEnv
     depends_on:
       - db
 
@@ -21,13 +25,21 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     networks:
       - mynetwork
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres1402
-      - POSTGRES_DB=Sharif_Pub
+    env_file:
+      - ./.productionEnvDb
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    ports:
+      - 1337:80
+    depends_on:
+      - server
 
 volumes:
   postgres_data:
+  static_volume:
 
 networks:
   mynetwork:

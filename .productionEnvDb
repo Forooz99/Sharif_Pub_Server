@@ -1,0 +1,3 @@
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres1402
+POSTGRES_DB=Sharif_Pub_prod

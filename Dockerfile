@@ -18,6 +18,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Set the working directory in the container
 WORKDIR /serverCode
+
+# copy entrypoint.sh
+COPY ./entrypoint.sh .
+RUN sed -i 's/\r$//g' ./sourceCode/entrypoint.sh
+RUN chmod +x ./sourceCode/entrypoint.sh
+
 # copy whole project to your docker home directory
 COPY . serverCode
 

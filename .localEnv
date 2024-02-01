@@ -7,3 +7,4 @@ DB_PASSWORD=postgres1402
 DB_HOST=localhost
 DB_PORT=5432
 DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+DATABASE=postgres
