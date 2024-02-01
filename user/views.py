@@ -8,13 +8,16 @@ from .forms import SignupForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
 
 
+# GET: retrieve a resource
+# PUT: insert & update stored resource
+# POST: create new resource in collection
+# DELETE: remove resource
 def home(request):
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def signup(request):
-    # user = CustomUserSerializer(data=request.data)
     if request.data.get('role') == 'READER':
         print(request.data)
         reader = ReaderSerializer(data=request.data)
@@ -64,12 +67,12 @@ def delete_account(request):
     return redirect('home')
 
 
-@api_view["GET"]
+@api_view(['GET'])
 def all_readers(request):
     pass
 
 
-@api_view["GET"]
+@api_view(['GET'])
 def all_publishers(request):
     pass
 

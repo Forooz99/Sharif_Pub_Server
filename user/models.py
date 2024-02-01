@@ -36,7 +36,7 @@ class CustomUser(AbstractUser):  # user can have multiple roles at same time
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
     email = models.EmailField(unique=True)
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name"]
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email

@@ -2,19 +2,23 @@ version: "3.9"
 
 services:
   web:
-    build: .
-    command: python /code/manage.py runserver 0.0.0.0:8000
+    build: .  # looks for Dockerfile in the current directory and uses it to build the image
+    command: python /serverCode/manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/serverCode
     ports:
       - 8000:8000
     depends_on:
       - db
 
   db:
-    image: postgres:11
+    image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres1402
+      - POSTGRES_DB=Sharif_Pub
 
   volumes:
     postgres_data:

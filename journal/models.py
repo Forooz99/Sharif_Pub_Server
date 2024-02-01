@@ -3,7 +3,7 @@ from django.core.validators import FileExtensionValidator
 
 
 class Journal(models.Model):
-    name = models.CharField(unique=True, max_length=50)
+    name = models.CharField(primary_key=True, max_length=50)
     logo = models.ImageField(upload_to='journal_logos/', null=True, blank=True)
     slogan = models.CharField(max_length=150, blank=True)
     director_name = models.CharField(max_length=150, blank=True)
@@ -29,6 +29,7 @@ class Journal(models.Model):
 
 
 class Volume(models.Model):
+    id = models.AutoField(primary_key=True)
     number = models.IntegerField()
     title = models.CharField(max_length=300)
     description = models.TextField(blank=True)

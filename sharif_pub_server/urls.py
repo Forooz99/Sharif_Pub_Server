@@ -21,9 +21,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include('journal.urls')),  # add local apps urls
-    path("user/", include('user.urls')),
-    path("journal/", include('journal.urls')),
+    path("", include('user.urls')),  # add local apps urls
+    path("users/", include('user.urls')),
+    path("journals/", include('journal.urls')),
 ]
 
 # if settings.DEBUG:

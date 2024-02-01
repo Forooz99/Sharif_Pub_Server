@@ -35,7 +35,7 @@ SECRET_KEY = env_config.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_config.get("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env_config.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -94,12 +94,12 @@ WSGI_APPLICATION = "sharif_pub_server.wsgi.application"
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env_config.get('DB_NAME'),
-        'USER': env_config.get('DB_USER'),
-        'PASSWORD': env_config.get('DB_PASSWORD'),
-        'HOST': 'localhost',  # use 'db' for docker
-        'PORT': 5432
+        "ENGINE": env_config.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": env_config.get("DB_NAME"),
+        "USER": env_config.get("DB_USER"),
+        "PASSWORD": env_config.get("DB_PASSWORD"),
+        "HOST": env_config.get("DB_HOST", "localhost"),
+        "PORT": env_config.get("DB_PORT", "5432")
     }
 }
 
