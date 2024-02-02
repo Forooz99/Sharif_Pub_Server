@@ -34,7 +34,7 @@ class CustomUser(AbstractUser):  # user can have multiple roles at same time
         (READER, 'Reader'),
     )
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(primary_key=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -46,7 +46,21 @@ class Reader(CustomUser):
     liked_volumes = models.ManyToManyField(Volume)
     comments = models.CharField(max_length=300)
 
+    def __str__(self):
+        return f"Reader: {self.email}"
+
+    class Meta:
+        permissions = []
+        db_table = 'Reader'
+
 
 class Publisher(CustomUser):
     owned_journal = models.ManyToManyField(Journal)
+
+    def __str__(self):
+        return f"Publisher: {self.email}"
+
+    class Meta:
+        permissions = []
+        db_table = 'Publisher'
 

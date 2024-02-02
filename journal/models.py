@@ -27,6 +27,10 @@ class Journal(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+    class Meta:
+        permissions = []
+        db_table = 'Journal'
+
 
 class Volume(models.Model):
     id = models.AutoField(primary_key=True)
@@ -41,3 +45,7 @@ class Volume(models.Model):
 
     def __str__(self):
         return f"{self.journal} - Number: {self.number}, {self.title}"
+
+    class Meta:
+        permissions = []
+        db_table = 'Volume'
