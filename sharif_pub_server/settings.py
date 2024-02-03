@@ -54,8 +54,6 @@ INSTALLED_APPS = [
     "journal.apps.JournalConfig",
 ]
 
-AUTH_USER_MODEL = "user.CustomUser"  # main model for authentication
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

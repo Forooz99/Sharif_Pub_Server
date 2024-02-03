@@ -24,6 +24,3 @@ urlpatterns = [
     path("api/v1/users/", include('user.urls')),  # add local apps urls
     path("api/v1/journals/", include('journal.urls')),
 ]
-
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

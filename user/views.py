@@ -1,35 +1,30 @@
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import CustomUser, Reader, Publisher
-from .serializers import CustomUserSerializer, ReaderSerializer, PublisherSerializer
+from .models import Reader, Publisher
+from .serializers import ReaderSerializer, PublisherSerializer
 from rest_framework import serializers, status
-from .forms import SignupForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
-
-
-# GET: retrieve a resource
-# PUT: insert & update stored resource
-# POST: create new resource in collection
-# DELETE: remove resource
-def home(request):
-    return Response(status=status.HTTP_200_OK)
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 
 @api_view(['POST'])
 def signup(request):
+    if not request.data:
+        return Response(data="Error Message: Empty Body", status=400, content_type='application/json')
+
     if request.data.get('role') == 'READER':
-        print(request.data)
         reader = ReaderSerializer(data=request.data)
         if Reader.objects.filter(**request.data).exists():
             raise serializers.ValidationError('This reader already exists')
 
         if reader.is_valid():
             reader.save()
-            return Response(reader.data)
+            return Response(data="New Reader Added Successfully", status=201, content_type='application/json')
         else:
-            print("Nooooo")
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND, content_type='application/json')
     elif request.data.get('role') == 'PUBLISHER':
         publisher = PublisherSerializer(data=request.data)
         if Publisher.objects.filter(**request.data).exists():
@@ -37,12 +32,11 @@ def signup(request):
 
         if publisher.is_valid():
             publisher.save()
-            return Response(publisher.data)
+            return Response(data="New Publisher Added Successfully", status=201, content_type='application/json')
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND, content_type='application/json')
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    # validating for already existing data
+        return Response(status=status.HTTP_404_NOT_FOUND, content_type='application/json')
 
 
 @api_view(['POST'])
@@ -55,7 +49,7 @@ def login(request):
         if user:
             login(request, user)
             return redirect('home')
-    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK, content_type='application/json')
 
 
 def logout(request):
@@ -63,18 +57,110 @@ def logout(request):
     return redirect('home')
 
 
-def delete_account(request):
-    return redirect('home')
+class ReadersAPI(APIView):
+
+    def get(self, request):
+        readers = Reader.objects.all()
+        if readers:
+            serializer = ReaderSerializer(journals, many=True)
+            return Response(serializer.data, status=200, content_type='application/json')
+        else:
+            return Response(status=400, content_type='application/json')
+
+    def post(self, request):
+        serializer = ReaderSerializer(data=request.data)
+        print("///////////////////")
+        print(request.data)
+        if not request.data:
+            return Response(data="Error Message: Empty Body", status=400, content_type='application/json')
+        elif Reader.objects.filter(**request.data).exists():
+            raise serializers.ValidationError('This Reader Already Exists')
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data="New Reader Added Successfully", status=201, content_type='application/json')
+        return Response(serializer.errors, status=400, content_type='application/json')
 
 
-@api_view(['GET'])
-def all_readers(request):
-    pass
+class ReaderByIdAPI(APIView):
+
+    def get_reader(self, pk):
+        try:
+            return Reader.objects.get(pk=pk)
+        except Reader.DoesNotExist:
+            return Response(status=400, content_type='application/json')
+
+    def get(self, request, pk):
+        reader = self.get_reader(pk)
+        serializer = ReaderSerializer(reader)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        reader = self.get_reader(pk)
+        serializer = ReaderSerializer(instance=reader, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200, content_type='application/json')
+        else:
+            return Response(serializer.errors, status=400, content_type='application/json')
+
+    def delete(self, request, pk):
+        reader = self.get_reader(pk)
+        serializer = ReaderSerializer(instance=reader)
+        reader.delete()
+        return Response(serializer.data, status=202, content_type='application/json')
 
 
-@api_view(['GET'])
-def all_publishers(request):
-    pass
+class PublishersAPI(APIView):
+
+    def get(self, request):
+        publishers = Publisher.objects.all()
+        if publishers:
+            serializer = PublisherSerializer(journals, many=True)
+            return Response(serializer.data, status=200, content_type='application/json')
+        else:
+            return Response(status=400, content_type='application/json')
+
+    def post(self, request):
+        serializer = PublisherSerializer(data=request.data)
+        if not request.data:
+            return Response(data="Error Message: Empty Body", status=400, content_type='application/json')
+        elif Reader.objects.filter(**request.data).exists():
+            raise serializers.ValidationError('This Publisher Already Exists')
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data="New Publisher Added Successfully", status=201, content_type='application/json')
+        return Response(serializer.errors, status=400, content_type='application/json')
 
 
+class PublisherByIdAPI(APIView):
+
+    def get_publisher(self, pk):
+        try:
+            return Publisher.objects.get(pk=pk)
+        except Publisher.DoesNotExist:
+            return Response(status=400)
+
+    def get(self, request, pk):
+        publisher = self.get_publisher(pk)
+        serializer = PublisherSerializer(publisher)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        publisher = self.get_publisher(pk)
+        serializer = PublisherSerializer(instance=publisher, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200, content_type='application/json')
+        else:
+            return Response(serializer.errors, status=400, content_type='application/json')
+
+    def delete(self, request, pk):
+        publisher = self.get_publisher(pk)
+        serializer = PublisherSerializer(instance=publisher)
+        publisher.delete()
+        return Response(serializer.data, status=202, content_type='application/json')
 

@@ -1,11 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Reader, Publisher
-
-
-class CustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = '__all__'
+from .models import Reader, Publisher
 
 
 class ReaderSerializer(serializers.ModelSerializer):

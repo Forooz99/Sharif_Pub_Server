@@ -1,14 +1,15 @@
 from django.urls import path
+from user.views import *
 from . import views
 
-
 urlpatterns = [
-    path('readers', views.all_readers, name='all_readers'),
-    path('publishers', views.all_publishers, name='all_publishers'),
-    path('login/', views.login, name='login'),
-    path('signup/', views.signup, name='signup'),
-    path('logout/', views.logout, name='logout'),
-    path('<int:pk>', views.delete_account, name='delete_account'),
+    path('readers', ReadersAPI.as_view()),
+    path('publishers', PublishersAPI.as_view()),
+    path('readers/<int:pk>', ReaderByIdAPI.as_view()),
+    path('publishers/<int:pk>', PublisherByIdAPI.as_view()),
+    path('signup', views.signup),
+    path('login', views.login),
+    path('logout', views.logout),
 ]
 
 

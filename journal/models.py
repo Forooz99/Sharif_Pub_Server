@@ -6,9 +6,9 @@ class Journal(models.Model):
     name = models.CharField(primary_key=True, max_length=50)
     logo = models.ImageField(upload_to='journal_logos/', null=True, blank=True)
     slogan = models.CharField(max_length=150, blank=True)
-    director_name = models.CharField(max_length=150, blank=True)
-    chief_editor = models.CharField(max_length=150, blank=True)
-    creation_date = models.DateTimeField(null=True)
+    director_name = models.CharField(max_length=150, null=True, blank=True)
+    chief_editor = models.CharField(max_length=150, null=True, blank=True)
+    establishment_date = models.DateTimeField(null=True, blank=True)
     DEPARTMENT_CHOICES = [
         (None, 'Select a major'),
         ('CE', 'Computer Engineering'),
