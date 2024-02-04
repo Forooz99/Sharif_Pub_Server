@@ -5,13 +5,12 @@ from . import views
 urlpatterns = [
     path('readers', ReadersAPI.as_view()),
     path('publishers', PublishersAPI.as_view()),
-    path('readers/<int:pk>', ReaderByIdAPI.as_view()),
-    path('publishers/<int:pk>', PublisherByIdAPI.as_view()),
+    path('readers/<str:pk>', ReaderByIdAPI.as_view()),
+    path('publishers/<str:pk>', PublisherByIdAPI.as_view()),
     path('signup', views.signup),
     path('login', views.login),
     path('logout', views.logout),
 ]
 
 
-# use - instead of _ in URI, no / at the end, lowercase, no file extension included, CRUD name function not be used
-# in URI
+# use - instead of _ in URI, no / at the end, lowercase, no file extension included, CRUD name function not be used in URI

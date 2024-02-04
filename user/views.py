@@ -15,7 +15,7 @@ def signup(request):
     if not request.data:
         return Response(data="Error Message: Empty Body", status=400, content_type='application/json')
 
-    if request.data.get('role') == 'READER':
+    if request.data.get('type') == 'READER':
         reader = ReaderSerializer(data=request.data)
         if Reader.objects.filter(**request.data).exists():
             raise serializers.ValidationError('This reader already exists')
@@ -24,8 +24,8 @@ def signup(request):
             reader.save()
             return Response(data="New Reader Added Successfully", status=201, content_type='application/json')
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND, content_type='application/json')
-    elif request.data.get('role') == 'PUBLISHER':
+            return Response(data="Error Message: Bad Request", status=400, content_type='application/json')
+    elif request.data.get('type') == 'PUBLISHER':
         publisher = PublisherSerializer(data=request.data)
         if Publisher.objects.filter(**request.data).exists():
             raise serializers.ValidationError('This publisher already exists')
@@ -34,9 +34,9 @@ def signup(request):
             publisher.save()
             return Response(data="New Publisher Added Successfully", status=201, content_type='application/json')
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+            return Response(data="Error Message: Bad Request", status=400, content_type='application/json')
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+        return Response(data="Error Message: Bad Request", status=400, content_type='application/json')
 
 
 @api_view(['POST'])
@@ -49,9 +49,10 @@ def login(request):
         if user:
             login(request, user)
             return redirect('home')
-    return Response(status=status.HTTP_200_OK, content_type='application/json')
+    return Response(data="Successful Login", status=200, content_type='application/json')
 
 
+@api_view(['POST'])
 def logout(request):
     logout(request)
     return redirect('home')
@@ -62,15 +63,14 @@ class ReadersAPI(APIView):
     def get(self, request):
         readers = Reader.objects.all()
         if readers:
-            serializer = ReaderSerializer(journals, many=True)
+            serializer = ReaderSerializer(readers, many=True)
             return Response(serializer.data, status=200, content_type='application/json')
         else:
-            return Response(status=400, content_type='application/json')
+            return Response(data="Cant Get Readers Details", status=400, content_type='application/json')
 
     def post(self, request):
         serializer = ReaderSerializer(data=request.data)
-        print("///////////////////")
-        print(request.data)
+
         if not request.data:
             return Response(data="Error Message: Empty Body", status=400, content_type='application/json')
         elif Reader.objects.filter(**request.data).exists():
@@ -79,7 +79,7 @@ class ReadersAPI(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(data="New Reader Added Successfully", status=201, content_type='application/json')
-        return Response(serializer.errors, status=400, content_type='application/json')
+        return Response(data="Cant Add New Reader", status=400, content_type='application/json')
 
 
 class ReaderByIdAPI(APIView):
@@ -101,15 +101,14 @@ class ReaderByIdAPI(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200, content_type='application/json')
+            return Response(data="Reader Is Updated Successfully", status=200, content_type='application/json')
         else:
-            return Response(serializer.errors, status=400, content_type='application/json')
+            return Response(data="Cant Update Reader", status=400, content_type='application/json')
 
     def delete(self, request, pk):
         reader = self.get_reader(pk)
-        serializer = ReaderSerializer(instance=reader)
         reader.delete()
-        return Response(serializer.data, status=202, content_type='application/json')
+        return Response(data="Reader Is Deleted Successfully", status=200, content_type='application/json')
 
 
 class PublishersAPI(APIView):
@@ -120,7 +119,7 @@ class PublishersAPI(APIView):
             serializer = PublisherSerializer(journals, many=True)
             return Response(serializer.data, status=200, content_type='application/json')
         else:
-            return Response(status=400, content_type='application/json')
+            return Response(data="Cant Get Publishers Details", status=400, content_type='application/json')
 
     def post(self, request):
         serializer = PublisherSerializer(data=request.data)
@@ -132,7 +131,7 @@ class PublishersAPI(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(data="New Publisher Added Successfully", status=201, content_type='application/json')
-        return Response(serializer.errors, status=400, content_type='application/json')
+        return Response(data="Cant Add New Publisher", status=400, content_type='application/json')
 
 
 class PublisherByIdAPI(APIView):
@@ -154,13 +153,12 @@ class PublisherByIdAPI(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200, content_type='application/json')
+            return Response(data="Publisher Is Updated Successfully", status=200, content_type='application/json')
         else:
-            return Response(serializer.errors, status=400, content_type='application/json')
+            return Response(data="Cant Update Publisher", status=400, content_type='application/json')
 
     def delete(self, request, pk):
         publisher = self.get_publisher(pk)
-        serializer = PublisherSerializer(instance=publisher)
         publisher.delete()
-        return Response(serializer.data, status=202, content_type='application/json')
+        return Response(data="Publisher Is Deleted Successfully", status=200, content_type='application/json')
 
