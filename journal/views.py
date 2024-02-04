@@ -16,7 +16,7 @@ class JournalsAPI(APIView):
             serializer = JournalSerializer(journals, many=True)
             return Response(serializer.data, status=200, content_type='application/json')
         else:
-            return Response(data="Cant Get Journals Details", status=400, content_type='application/json')
+            return Response(data="No Journal Exist", status=204, content_type='application/json')
 
     def post(self, request):
         serializer = JournalSerializer(data=request.data)
@@ -28,7 +28,7 @@ class JournalsAPI(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(data="New Journal Added Successfully", status=201, content_type='application/json')
-        return Response(data="Cant Add New Journal", status=400, content_type='application/json')
+        return Response(serializer.errors, status=400, content_type='application/json')
 
 
 class JournalByIdAPI(APIView):
@@ -52,7 +52,7 @@ class JournalByIdAPI(APIView):
             serializer.save()
             return Response(data="Journal Is Updated Successfully", status=200, content_type='application/json')
         else:
-            return Response(data="Cant Update Journal", status=400, content_type='application/json')
+            return Response(serializer.errors, status=400, content_type='application/json')
 
     def delete(self, request, pk):
         journal = self.get_journal(pk)
@@ -68,7 +68,7 @@ class VolumesAPI(APIView):
             serializer = VolumeSerializer(volumes, many=True)
             return Response(serializer.data, status=200, content_type='application/json')
         else:
-            return Response(status=400, content_type='application/json')
+            return Response(data="No Volume Exist", status=204, content_type='application/json')
 
     def post(self, request):
         serializer = VolumeSerializer(data=request.data)
@@ -82,7 +82,7 @@ class VolumesAPI(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(data="New Volume Added Successfully", status=201, content_type='application/json')
-        return Response(data="Cant Add New Volume", status=400, content_type='application/json')
+        return Response(serializer.errors, status=400, content_type='application/json')
 
 
 class VolumeByIdAPI(APIView):
@@ -106,7 +106,7 @@ class VolumeByIdAPI(APIView):
             serializer.save()
             return Response(data="Volume Is Updated Successfully", status=200, content_type='application/json')
         else:
-            return Response(data="Cant Update Volume", status=400, content_type='application/json')
+            return Response(serializer.errors, status=400, content_type='application/json')
 
     def delete(self, request, pk):
         volume = self.get_volume(pk)

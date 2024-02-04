@@ -79,7 +79,7 @@ class ReadersAPI(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(data="New Reader Added Successfully", status=201, content_type='application/json')
-        return Response(data="Cant Add New Reader", status=400, content_type='application/json')
+        return Response(serializer.errors, status=400, content_type='application/json')
 
 
 class ReaderByIdAPI(APIView):
@@ -116,22 +116,23 @@ class PublishersAPI(APIView):
     def get(self, request):
         publishers = Publisher.objects.all()
         if publishers:
-            serializer = PublisherSerializer(journals, many=True)
+            serializer = PublisherSerializer(publishers, many=True)
             return Response(serializer.data, status=200, content_type='application/json')
         else:
             return Response(data="Cant Get Publishers Details", status=400, content_type='application/json')
 
     def post(self, request):
         serializer = PublisherSerializer(data=request.data)
+
         if not request.data:
             return Response(data="Error Message: Empty Body", status=400, content_type='application/json')
-        elif Reader.objects.filter(**request.data).exists():
+        elif Publisher.objects.filter(**request.data).exists():
             raise serializers.ValidationError('This Publisher Already Exists')
 
         if serializer.is_valid():
             serializer.save()
             return Response(data="New Publisher Added Successfully", status=201, content_type='application/json')
-        return Response(data="Cant Add New Publisher", status=400, content_type='application/json')
+        return Response(serializer.errors, status=400, content_type='application/json')
 
 
 class PublisherByIdAPI(APIView):
