@@ -25,4 +25,11 @@
 ##### `python manage.py runserver`
 
 # مستندات زیرساخت
+داکرایز بک اند به دو حالت development و production صورت گرفته است.
+
+فایل های dockerfile و docker-compose برای حالت development هستند که یک کانتینر پایگاه داده و یک کانتینر برای سرور جنگو ساخته میشود و برای توسعه قابل استفاده است. کافی است دستور زیر را اجرا کنیم.
+### `docker-compose -f docker-compose.yml build`
+
+فایل های dockerfile.prof و docker-compose.prod برای حالت production هستند. در این حالت از gunicorn و nginx نیز استفاده میشود. کانتینر ها از طریق شبکه داخلی داکر با هم ارتباط دارند.
+### `docker-compose -f docker-compose.prod.yml build`
 
